@@ -1,0 +1,14 @@
+all:
+  hosts:
+    MK:
+      ansible_host: 192.168.237.134
+      ansible_network_os: routeros
+    IOS:
+      ansible_host: 192.168.237.140
+      ansible_network_os: ios
+  vars:
+    ansible_connection: network_cli
+    ansible_become: yes
+    ansible_become_method: enable
+    ansible_user: admin
+    ansible_ssh_pass: admin

@@ -1,0 +1,14 @@
+- name: Backup de configuração
+  hosts: all
+  gather_facts: no
+
+  tasks:
+
+    - name: Incluir Roles
+      include_role:
+        name: "{{ ansible_network_os }}"
+
+    - name: Criar arquivo de configuracao
+      copy:
+        content: "{{ ansible_net_config }}"
+        dest: "{{ inventory_hostname }}"

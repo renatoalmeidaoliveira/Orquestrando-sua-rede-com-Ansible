@@ -1,0 +1,14 @@
+- name: Backup de configuração
+  hosts: all
+  gather_facts: yes
+
+  tasks:
+
+    - name: Get arp
+      ios_command:
+        commands: show arp
+      register: arp_output
+
+    - name: Print var
+      debug:
+        msg: "{{ arp_output['stdout'][0]  }}"

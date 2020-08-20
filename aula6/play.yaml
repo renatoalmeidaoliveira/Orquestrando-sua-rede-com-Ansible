@@ -1,0 +1,30 @@
+- name: Backup de configuração
+  hosts: MK
+  gather_facts: yes
+  vars:
+    playbook_var: "valor"
+
+
+  tasks:
+
+    - name:  Include var
+      include_vars:
+        file: var_file.yaml
+      register: register_var
+
+
+    - name: Print var
+      debug:
+        msg:  "{{ item }}"
+      with_items:
+        -  "{{ inventory_var }}" 
+        -  "{{ playbook_var }}"
+        -  "{{ ansible_facts['nodename'] }}"
+        -  "{{ register_var['ansible_included_var_files'] }}"
+        -  "{{ includevars_var }}"
+        -  "{{ groupvars_var }}"
+#        -  "{{ hostFilevar }}"
+        -  "{{ hostvars_var  }}"
+#        -  "{{ extravar_var }}"
+#        -  "{{ vaultvar_var }}"
+        -  "{{ ansible_ssh_pass }}"

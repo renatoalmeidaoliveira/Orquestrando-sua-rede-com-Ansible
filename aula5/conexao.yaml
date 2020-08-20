@@ -1,0 +1,39 @@
+- name: teste de conexao
+  hosts: all
+  gather_facts: no
+
+  tasks:
+
+    - name: testa conexao
+      wait_for_connection:
+        timeout: 3
+        connect_timeout: 3
+      register: connection
+      ignore_errors: yes
+    
+
+    - name: debug
+      debug:
+        var: connection
+
+    - name: Cria saida
+      file:
+        path: saida.csv
+        state: touch
+        modification_time: preserve
+        access_time: preserve
+
+    - name: cria cabecalio
+      lineinfile:
+        path: saida.csv
+        line: hostname;falha;observacao
+        insertbefore: BOF
+        state: present
+
+    - name: Imprime estado
+      lineinfile:
+        path: saida.csv
+        line: "{{ inventory_hostname }};{{ connection.failed }};{{ connection.msg | default('') }}"
+        insertafter: EOF
+        state: present
+

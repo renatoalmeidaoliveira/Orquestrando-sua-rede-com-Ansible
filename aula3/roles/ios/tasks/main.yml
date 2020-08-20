@@ -1,0 +1,5 @@
+- name: Consumir fatos do IOS
+  ios_facts:
+    gather_subset:
+      - config
+

@@ -1,0 +1,23 @@
+- name: Backup de configuração
+  hosts: all
+  gather_facts: no
+
+  tasks:
+
+  - name: Consumir fatos do routeros
+    routeros_facts:
+      gather_subset:
+        - config
+    when: ansible_network_os == "routeros"
+
+  - name: Consumir fatos do IOS
+    ios_facts:
+      gather_subset:
+        - config
+    when: ansible_network_os == "ios"
+
+  - name: Criar arquivo de configuracao
+    copy:
+      content: "{{ ansible_net_config }}"
+      dest: "{{ inventory_hostname }}"
+

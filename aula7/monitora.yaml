@@ -1,0 +1,56 @@
+- name: Monitoramento IRR
+  hosts: localhost
+  gather_facts: no
+
+  handlers:
+    - name: create mail File
+      file:
+        path: mail
+        state: touch
+        modification_time: preserve
+        access_time: preserve
+      listen: "local"
+
+    - name: Add lines
+      lineinfile:
+        path: mail
+        line: "{{ IRRPrimario.message.irrPrefix  | symmetric_difference(IRRSecundario.message.irrPrefix) }}"
+      listen: "local"
+
+    - name: Send email
+      mail:
+        host: smtp.gmail.com
+        port: 587
+        username: "{{ mail }}"
+        password: "{{ pass }}"
+        to: Renato <renato@simpleinboxer.site>
+        subject: Ansible-report
+        body: "{{ lookup('file', 'mail') }}"
+      listen: "local"
+
+    - name: remove mail file
+      file:
+        path: mail
+        state: absent
+      listen: "local"
+  
+  tasks:
+
+  - name: IRR Primario
+    renatoalmeidaoliveira.netero.irr_prefix:
+        asn32Safe: True
+        IPv: 4
+        asSet: as-nflx
+        host: whois.radb.net
+    register: IRRPrimario
+
+  - name: IRR Local
+    renatoalmeidaoliveira.netero.irr_prefix:
+        asn32Safe: True
+        IPv: 4
+        asSet: as-nflx
+        host: 192.168.237.212:8043
+    register: IRRSecundario
+    changed_when: IRRPrimario.message != IRRSecundario.message
+    notify: local
+

@@ -1,0 +1,2 @@
+hostvars_var: "Variavel de Host"
+ansible_ssh_pass: "{{ vault_ansible_ssh_pass }}"

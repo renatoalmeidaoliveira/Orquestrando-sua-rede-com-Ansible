@@ -1,0 +1,23 @@
+- name: Criacao do inventario
+  hosts: localhost
+  gather_facts: no
+
+  tasks:
+
+    - name: Le CSV
+      read_csv:
+        path: inventario.csv
+        delimiter: ';'
+      register: inv
+
+#    - name: debug read_csv
+#      debug:
+#        var: inv
+
+
+    - name: Cria inventario
+      lineinfile:
+        path: inventory
+        line:  "{{item.Hostname}} ansible_host={{ item.IP }} ansible_network_os={{ item.network_os }}"
+        create: yes
+      loop: "{{ inv.list }}"

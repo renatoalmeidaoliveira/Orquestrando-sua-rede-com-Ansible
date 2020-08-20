@@ -1,0 +1,5 @@
+hostname;falha;observacao
+Huawei;True;timed out waiting for connection port up: Failed to authenticate: Authentication failed.
+MK;False;
+IOS;False;
+Huawei;False;

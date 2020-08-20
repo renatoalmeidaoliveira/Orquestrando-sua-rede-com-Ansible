@@ -1,0 +1,60 @@
+- name: Monitoramento IRR
+  hosts: localhost
+  gather_facts: no
+
+  handlers:
+
+    - name: print local
+      debug:
+        msg: "{{ IRRPrimario.message.irrPrefix  | symmetric_difference(IRRSecundario.message.irrPrefix) }}"
+      listen: "local"
+    
+    - name: print TC
+      debug:
+        msg: "{{ IRRPrimario.message.irrPrefix  | symmetric_difference(IRRTC.message.irrPrefix) }}"
+      listen: "TC"
+    
+    - name: print NTT
+      debug:
+        msg: "{{ IRRPrimario.message.irrPrefix  | symmetric_difference(IRRNTT.message.irrPrefix) }}"
+      listen: "NTT"
+  
+  tasks:
+
+  - name: IRR Primario
+    renatoalmeidaoliveira.netero.irr_prefix:
+        asn32Safe: True
+        IPv: 4
+        asSet: as-nflx
+        host: whois.radb.net
+    register: IRRPrimario
+
+  - name: IRR Local
+    renatoalmeidaoliveira.netero.irr_prefix:
+        asn32Safe: True
+        IPv: 4
+        asSet: as-nflx
+        host: 192.168.237.212:8043
+    register: IRRSecundario
+    changed_when: IRRPrimario.message != IRRSecundario.message
+    notify: local
+
+  - name: IRR TC
+    renatoalmeidaoliveira.netero.irr_prefix:
+        asn32Safe: True
+        IPv: 4
+        asSet: as-nflx
+        host: whois.bgp.net.br
+    register: IRRTC
+    changed_when: IRRPrimario.message != IRRTC.message
+    notify: TC
+  
+  - name: IRR NTT
+    renatoalmeidaoliveira.netero.irr_prefix:
+        asn32Safe: True
+        IPv: 4
+        asSet: as-nflx
+        host: rr.ntt.net
+    register: IRRNTT
+    changed_when: IRRPrimario.message != IRRNTT.message
+    notify: NTT

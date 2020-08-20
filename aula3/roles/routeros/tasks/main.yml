@@ -1,0 +1,11 @@
+- name: export config
+  routeros_command:
+    commands: /export verbose
+    wait_for: result[0] contains ''
+  register: saida
+
+- name: Cria variavel de saida
+  set_fact:
+    ansible_net_config: '{{ saida.stdout[0] |
+                         regex_replace("# \w+/\d+/\d+ \d+:\d+:\d+.*\n" , "")  }}'
+
